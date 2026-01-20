@@ -8,9 +8,50 @@ class Controller:
         self._model = model
 
     def handle_create_graph(self, e):
-        pass
+        try:
+            self.num_album = int(self._view.txtNumAlbumMin.value)
+
+            if self.num_album < 0:
+                self._view.alert.show_alert("Inserisci un numero positivo di album")
+            else:
+                self._model.load_artists_with_min_albums(self.num_album)
+                self._model.build_graph()
+
+                self._view.txt_result.controls.clear()
+
+                num_nodi = self._model._graph.number_of_nodes()
+                num_archi = self._model._graph.number_of_edges()
+
+                self._view.txt_result.controls.append(ft.Text(f"Grafo creato: {num_nodi} nodi (artisti), {num_archi} archi"))
+
+                self._view.btnArtistsConnected.disabled = False
+                self._view.ddArtist.disabled = False
+
+                #riempio la dropdown
+
+                self._view.ddArtist.options.clear()
+
+                for nodo in self._model._graph.nodes():
+                    self._view.ddArtist.options.append(ft.DropdownOption(key=nodo.id, text=nodo.name))
+
+                #print("corretto")
+                self._view.update_page()
+
+        except ValueError:
+            self._view.alert.show_alert("Inserisci un numero di album valido")
+
+    def artist_setter(self,e):
+        self.id_artista_scelto = int(e.control.value)
+
+        print(self.id_artista_scelto)
 
     def handle_connected_artists(self, e):
-        pass
+        self._view.txtMaxArtists.disabled = False
+        self._view.txtMinDuration.disabled = False
+        self._view.btnSearchArtists.disabled = False
+
+        self._model.connected_artists(self.id_artista_scelto)
+
+        self._view.update_page()
 
 
