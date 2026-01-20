@@ -99,17 +99,19 @@ class Model:
 
 
     def ricorsione(self, parziale, peso):
-        if len(parziale) == self.n_max_artisti :
+
+        if len(parziale) == self.n_max_artisti :    #condizione di escape basata sul numero di artisti già presenti
             if peso > self.peso_ottimo :
                 self.peso_ottimo = peso
                 self.cammino_ottimo = copy.deepcopy(parziale)
-            return
+                return
 
         for nodo_vicino in self._graph.neighbors(parziale[-1]):
             if nodo_vicino in self.lista_artisti_minutaggi_validi and nodo_vicino not in parziale:
                 peso_arco = self._graph[parziale[-1]][nodo_vicino]["weight"]
                 parziale.append(nodo_vicino)
                 self.ricorsione(parziale, peso + peso_arco)
+                parziale.pop()  #backtracking
 
 
 

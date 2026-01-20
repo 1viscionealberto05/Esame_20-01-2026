@@ -75,6 +75,20 @@ class Controller:
             else:
                 self._model.cerca_cammino(durata_minuti,n_max_artisti)
 
+
+                self._view.txt_result.controls.clear()
+                self._view.txt_result.controls.append(ft.Text(f"Cammino di peso massimo dall'artista {self._model.dizionario_artisti[self.id_artista_scelto]}"))
+
+                self._view.txt_result.controls.append(ft.Text(f"Lunghezza: {durata_minuti}"))
+
+                for nodo in self._model.cammino_ottimo:
+                    self._view.txt_result.controls.append(ft.Text(f"{nodo}"))
+
+                self._view.txt_result.controls.append(ft.Text(f"Peso massimo {self._model.peso_ottimo}"))
+
+
+                self._view.update_page()
+
         except ValueError:
             self._view.alert.show_alert("Inserisci dei valori corretti per le caselle di testo")
 
