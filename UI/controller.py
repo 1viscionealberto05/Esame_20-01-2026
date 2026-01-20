@@ -79,7 +79,7 @@ class Controller:
                 self._view.txt_result.controls.clear()
                 self._view.txt_result.controls.append(ft.Text(f"Cammino di peso massimo dall'artista {self._model.dizionario_artisti[self.id_artista_scelto]}"))
 
-                self._view.txt_result.controls.append(ft.Text(f"Lunghezza: {durata_minuti}"))
+                self._view.txt_result.controls.append(ft.Text(f"Lunghezza: {len(self._model.cammino_ottimo)}"))
 
                 for nodo in self._model.cammino_ottimo:
                     self._view.txt_result.controls.append(ft.Text(f"{nodo}"))
