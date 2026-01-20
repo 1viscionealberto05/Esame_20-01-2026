@@ -52,6 +52,29 @@ class Controller:
 
         self._model.connected_artists(self.id_artista_scelto)
 
+        self._view.txt_result.controls.clear()
+
+        artista_scelto = self._model.dizionario_artisti[self.id_artista_scelto]
+
+        self._view.txt_result.controls.append(ft.Text(f"Artisti direttamente collegati all'artista {artista_scelto}"))
+
+        for i in range(0,len(self._model.lista_ordinata_vicini)):
+            artista = self._model.lista_ordinata_vicini[i]["vicino"]
+            n_generi = self._model.lista_ordinata_vicini[i]["peso"]
+            self._view.txt_result.controls.append(ft.Text(f"{artista} - Numero di generi in comune: {n_generi}"))
+
         self._view.update_page()
 
+    def search_artists(self, e):
+        try:
+            durata_minuti = float(self._view.txtMinDuration.value)
+            n_max_artisti = int(self._view.txtMaxArtists.value)
+
+            if durata_minuti < 0 or (n_max_artisti >= self._model._graph.number_of_nodes() or n_max_artisti <1):
+                self._view.alert.show_alert("Inserisci dei valori nei range corretti per le caselle di testo")
+            else:
+                self._model.cerca_cammino(durata_minuti,n_max_artisti)
+
+        except ValueError:
+            self._view.alert.show_alert("Inserisci dei valori corretti per le caselle di testo")
 

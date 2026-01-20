@@ -1,3 +1,5 @@
+import copy
+
 import networkx as nx
 from database.dao import DAO
 
@@ -48,20 +50,69 @@ class Model:
         #print(self._graph) check prova risultato - CONFORME AL TESTO
 
     def connected_artists(self, id_artista):
-        artista = self.dizionario_artisti[id_artista]
+        self.artista = self.dizionario_artisti[id_artista]  #valore inizializzato con self, richiamato nel punto 2
 
         #print(artista) check passaggio valori da controller - corretto
 
         lista_vicini = []
 
-        for vicino in self._graph.neighbors(artista):
+        for vicino in self._graph.neighbors(self.artista):
             diz = {"vicino":vicino, "peso":0}
-            peso = self._graph[artista][vicino]["weight"]
+            peso = self._graph[self.artista][vicino]["weight"]
             diz["peso"] = peso
             lista_vicini.append(diz)
 
-        self.lista_ordinata_vicini = sorted(lista_vicini, key = lambda x: x["peso"], reverse = False)
-        print(self.lista_ordinata_vicini[0:5])
+        self.lista_ordinata_vicini = sorted(lista_vicini, key = lambda x: x["vicino"], reverse = False)
+
+        #print(self.lista_ordinata_vicini[0:5])
+
+    def cerca_cammino(self, durata_minuti, n_max_artisti):
+        #print("collegamento corretto")
+
+        #cammino di peso massimo con lunghezza fissata che è il n. max artisti
+
+        nodo_inizale = self.artista
+
+        lista_id_artisti_minutaggi_validi = DAO.get_durate_artisti(durata_minuti)
+        self.lista_artisti_minutaggi_validi = []
+        #dizionario_artisti_validi = {}
+
+        for id_art in lista_id_artisti_minutaggi_validi:
+            art_pot = self.dizionario_artisti[id_art]
+            if art_pot in self.lista_artisti_validi:
+                self.lista_artisti_minutaggi_validi.append(art_pot)
+
+        #print(self.lista_artisti_minutaggi_validi)
+
+        self.n_max_artisti = n_max_artisti
+
+        self.cammino_ottimo = []
+        self.peso_ottimo = 0
+
+        parziale = [nodo_inizale]
+        peso_parziale = 0
+
+        self.ricorsione(parziale, peso_parziale)
+
+        print(self.cammino_ottimo)
+        print(self.peso_ottimo)
+
+
+    def ricorsione(self, parziale, peso):
+        if len(parziale) == self.n_max_artisti :
+            if peso > self.peso_ottimo :
+                self.peso_ottimo = peso
+                self.cammino_ottimo = copy.deepcopy(parziale)
+            return
+
+        for nodo_vicino in self._graph.neighbors(parziale[-1]):
+            if nodo_vicino in self.lista_artisti_minutaggi_validi and nodo_vicino not in parziale:
+                peso_arco = self._graph[parziale[-1]][nodo_vicino]["weight"]
+                parziale.append(nodo_vicino)
+                self.ricorsione(parziale, peso + peso_arco)
+
+
+
 
 
 

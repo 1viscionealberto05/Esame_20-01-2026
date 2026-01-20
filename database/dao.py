@@ -72,3 +72,30 @@ class DAO:
             return result
         except Exception as e:
             print("Errore di esecuzione query")
+
+    @staticmethod
+    def get_durate_artisti(durata_minuti):
+        try:
+            conn = DBConnect.get_connection()
+            result = []
+            cursor = conn.cursor(dictionary=True)
+            query = """
+                    SELECT DISTINCT(a.id) as id_artista
+                    FROM artist a, \
+                         album ab, track t
+                    WHERE a.id = ab.artist_id AND ab.id = t.album_id AND t.milliseconds >= %s
+                    GROUP BY a.id
+                    
+
+                    """
+            cursor.execute(query, [durata_minuti*60*1000], )    #conversione in millisec
+            for row in cursor:
+                result.append(row["id_artista"])
+
+            cursor.close()
+            conn.close()
+            return result
+
+
+        except Exception as e:
+            print("Errore di esecuzione query")
