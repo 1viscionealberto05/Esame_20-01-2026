@@ -73,11 +73,11 @@ class Model:
 
         nodo_inizale = self.artista
 
-        lista_id_artisti_minutaggi_validi = DAO.get_durate_artisti(durata_minuti)
+        lista_id_artisti_minutaggi_validi = DAO.get_durate_artisti(durata_minuti)   #recupero dal dao gli id degli artisti che rispettano la condizione di minutaggio
         self.lista_artisti_minutaggi_validi = []
         #dizionario_artisti_validi = {}
 
-        for id_art in lista_id_artisti_minutaggi_validi:
+        for id_art in lista_id_artisti_minutaggi_validi: #degli artisti trovati dal DAO mi serve che comunque rispettino le condizioni iniziali
             art_pot = self.dizionario_artisti[id_art]
             if art_pot in self.lista_artisti_validi:
                 self.lista_artisti_minutaggi_validi.append(art_pot)
